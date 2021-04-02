@@ -1,4 +1,5 @@
 import csv
+import pandas as pd
 
 def database_fn(
     Question_Type='text',
@@ -43,10 +44,34 @@ def database_fn(
     }
     return dataset_dict
 
+def removeDuplicates(filepath):
+    df = pd.read_csv(filepath)
+    legit_col = ['Question_Type',
+            'Answer_Type',
+            'Topic_Number',
+            'Variation',
+            'Question',
+            'Correct_Answer_1',
+            'Correct_Answer_2',
+            'Correct_Answer_3',
+            'Correct_Answer_4',
+            'Wrong_Answer_1',
+            'Wrong_Answer_2',
+            'Wrong_Answer_3',
+            'Time_in_seconds',
+            'Difficulty_Level',
+            'Question_IAV',
+            'ContributorMail',
+            'Solution_text',
+            'Solution_IAV'
+            ]
 
+    for col in df.columns:
+        if col not in legit_col:
+            del df[col]
 
 #open csv file
-def putInCsv(Topic_Number,Number_Of_Iterations,Main_Function,Filename):
+def putInCsv(Topic_Number,Number_Of_Iterations,Main_Function,Filename,removeDuplicates):
     csv_filename= Topic_Number + '_' + Filename.split('.')[0] + '.csv'
     with open(csv_filename,'w',newline='') as f:
         fieldnames = [
@@ -75,3 +100,6 @@ def putInCsv(Topic_Number,Number_Of_Iterations,Main_Function,Filename):
         for i in range(Number_Of_Iterations):
             field_dict = Main_Function()
             thewriter.writerow(field_dict)
+
+    if(removeDuplicates == True):
+        removeDuplicates(csv_filename)
